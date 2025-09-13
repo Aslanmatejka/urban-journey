@@ -94,8 +94,13 @@ function FindFoodPage({ initialCategory }) {
     };
 
     const handleClaim = (food) => {
-        // Redirect to ClaimFoodForm with food info (could use state or params)
-        navigate(`/claim`, { state: { food } });
+        // Ensure food object has both id and objectId for compatibility
+        const claimFood = {
+            ...food,
+            id: food.id || food.objectId,
+            objectId: food.objectId || food.id
+        };
+        navigate(`/claim`, { state: { food: claimFood } });
     };
 
 
@@ -293,7 +298,7 @@ function FindFoodPage({ initialCategory }) {
                     </div>
                     <Button variant="primary" onClick={handleSearch} disabled={searchLoading}>Search</Button>
                     {isSearchActive && (
-                        <Button variant="link" onClick={handleClearSearch}>Clear</Button>
+                        <Button variant="secondary" onClick={handleClearSearch}>Clear</Button>
                     )}
                 </div>
                 <div className="mt-12">

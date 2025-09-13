@@ -16,14 +16,13 @@ function FoodForm({
         category: '',
         expiry_date: '',
         donor_type: '', // 'individual' or 'organization'
-        donor_name: '',
         donor_zip: '',
         donor_city: '',
         donor_state: '',
-        donor_email: '',
-        donor_phone: '',
-        donor_occupation: '',
+        latitude: null,
+        longitude: null,
         image: null,
+        status: 'pending',
         ...initialData
     });
     // Show approval info

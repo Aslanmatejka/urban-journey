@@ -2,6 +2,7 @@
 
 import React from "react";
 import dataService from '../utils/dataService';
+import supabase from '../utils/supabaseClient';
 import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
@@ -19,10 +20,11 @@ export default function ClaimFoodForm() {
         school_contact: "",
         school_contact_email: "",
         school_contact_phone: "",
-        category: "",
         dietary_restrictions: "",
         pickup_dropoff: "",
-        members_count: ""
+        members_count: "",
+        food_title: food?.title || food?.name || "",
+        food_description: food?.description || ""
     });
     const [submitted, setSubmitted] = React.useState(false);
 
@@ -42,10 +44,18 @@ export default function ClaimFoodForm() {
         setLoading(true);
         setSubmitError(null);
         try {
-            // Compose claim data
+            // Get current user UID for RLS
+            const userResult = await supabase.auth.getUser();
+            const user = userResult.data?.user;
+            if (!user) throw new Error('User must be logged in to claim food');
+            const claimer_id = user.id;
+
+            // Compose claim data, exclude food_description, food_title, and pickup_dropoff
+            const { food_description, food_title, pickup_dropoff, ...restFormData } = formData;
             const claimData = {
-                ...formData,
+                ...restFormData,
                 food_id: food?.id || food?.objectId || null,
+                claimer_id,
                 status: 'pending',
             };
             await dataService.createFoodClaim(claimData);
@@ -94,7 +104,6 @@ export default function ClaimFoodForm() {
                     <Input label="School Contact (Case Worker)" name="school_contact" value={formData.school_contact} onChange={handleFormChange} required maxLength={100} helperText="Enter the name of your school contact or case worker." />
                     <Input label="School Contact Email" name="school_contact_email" type="email" value={formData.school_contact_email} onChange={handleFormChange} maxLength={100} helperText="Enter the email address of your school contact." />
                     <Input label="School Contact Phone" name="school_contact_phone" type="tel" value={formData.school_contact_phone} onChange={handleFormChange} maxLength={20} helperText="Enter the phone number of your school contact." />
-                    <Input label="Category (Food)" name="category" type="select" value={formData.category} onChange={handleFormChange} required options={[{ value: '', label: 'Select category' },{ value: 'produce', label: 'Fresh Produce' },{ value: 'dairy', label: 'Dairy' },{ value: 'bakery', label: 'Bakery' },{ value: 'pantry', label: 'Pantry Items' },{ value: 'meat', label: 'Meat & Poultry' },{ value: 'prepared', label: 'Prepared Foods' }]} helperText="Select the type of food you need." />
                     <Input label="Dietary Restrictions" name="dietary_restrictions" value={formData.dietary_restrictions} onChange={handleFormChange} maxLength={200} helperText="List any dietary restrictions." />
                     <Input label="Number of Members" name="members_count" type="number" value={formData.members_count} onChange={handleFormChange} required min={1} max={100} helperText="Specify how many members you are claiming for." />
                 </div>

@@ -153,7 +153,7 @@ function LoginPage() {
 
                                 <div className="text-sm">
                                     <Button
-                                        variant="link"
+                                        variant="secondary"
                                         size="sm"
                                         onClick={() => navigate('/forgot-password')}
                                     >
@@ -194,7 +194,7 @@ function LoginPage() {
 
                             <div className="mt-6">
                                 <Button
-                                    variant="link"
+                                    variant="secondary"
                                     onClick={() => navigate('/signup')}
                                 >
                                     Sign up

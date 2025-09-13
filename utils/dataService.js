@@ -2,6 +2,182 @@ import supabase from './supabaseClient.js'
 import { reportError } from './helpers.js'
 
 class DataService {
+  // Get food claims by status (for admin dashboard)
+  async getFoodClaims({ status }) {
+    try {
+      // First get the current session to ensure we're authenticated
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('User is not authenticated. Please log in.');
+      }
+      
+      const { data, error } = await supabase
+        .from('food_claims')
+        .select(`
+          *,
+          food_listings(
+            title, 
+            description, 
+            image_url,
+            quantity,
+            unit,
+            category
+          )
+        `)
+        .eq('status', status);
+      
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      reportError(error);
+      throw error;
+    }
+  }
+
+  async getClaimImpact() {
+    try {
+      console.log('Fetching impact data...');
+      
+      // First, get all approved food claims with their associated food listings
+      const { data: claims, error: claimsError } = await supabase
+        .from('food_claims')
+        .select(`
+          id,
+          food_id, 
+          members_count, 
+          people, 
+          school_staff, 
+          students,
+          created_at,
+          food_listings(
+            id,
+            quantity,
+            unit,
+            category,
+            donor_type,
+            created_at
+          )
+        `)
+        .eq('status', 'approved');
+        
+      if (claimsError) {
+        console.error('Error fetching claims:', claimsError);
+        throw claimsError;
+      }
+      
+      // Get all food listings that have been shared (even if not claimed)
+      const { data: sharedFood, error: sharedError } = await supabase
+        .from('food_listings')
+        .select(`
+          id, 
+          quantity, 
+          unit, 
+          category, 
+          donor_type, 
+          created_at, 
+          user_id,
+          status
+        `);  // Removed status filter to include ALL listings
+        
+      if (sharedError) {
+        console.error('Error fetching shared food:', sharedError);
+        throw sharedError;
+      }
+      
+      console.log(`Processing ${claims.length} claims and ${sharedFood.length} food listings (all statuses)`);
+      
+      // Log distribution of statuses for debugging
+      const statusCounts = sharedFood.reduce((acc, item) => {
+        acc[item.status] = (acc[item.status] || 0) + 1;
+        return acc;
+      }, {});
+      console.log('Food listing status distribution:', statusCounts);
+      
+      // Calculate impact metrics
+      const foodWasteReduced = claims.reduce((sum, claim) => {
+        const quantity = claim.food_listings?.quantity || 0;
+        return sum + quantity;
+      }, 0);
+      
+      const totalFoodShared = sharedFood.reduce((sum, listing) => {
+        return sum + (listing.quantity || 0);
+      }, 0);
+      
+      const neighborsHelped = claims.length;
+      const activeListings = sharedFood.filter(item => item.status === 'approved').length;
+      const donorsCount = new Set(sharedFood.map(item => item.user_id).filter(Boolean)).size;
+      
+      // Calculate people impact
+      const people = claims.reduce((sum, claim) => sum + (claim.people || 0), 0);
+      const schoolStaff = claims.reduce((sum, claim) => sum + (claim.school_staff || 0), 0);
+      const students = claims.reduce((sum, claim) => sum + (claim.students || 0), 0);
+      
+      // Calculate environmental impact (approximate CO2 reduction)
+      // Using an estimate that 1 lb of food waste = 2.5 lbs of CO2 equivalent
+      const co2Reduction = foodWasteReduced * 2.5;
+      
+      // Calculate total lives impacted
+      const livesImpacted = people + schoolStaff + students;
+      
+      // Additional statistics
+      const categoryDistribution = sharedFood.reduce((acc, item) => {
+        const category = item.category || 'uncategorized';
+        acc[category] = (acc[category] || 0) + 1;
+        return acc;
+      }, {});
+      
+      const result = { 
+        foodWasteReduced,
+        totalFoodShared,
+        neighborsHelped,
+        donorsCount,
+        people,
+        schoolStaff, 
+        students,
+        co2Reduction,
+        livesImpacted,
+        sharingCount: sharedFood.length,
+        activeListings,
+        categoryDistribution,
+        lastUpdated: new Date().toISOString()
+      };
+      
+      console.log('Impact data calculated:', result);
+      return result;
+    } catch (error) {
+      console.error('Error in getClaimImpact:', error);
+      reportError(error);
+      throw error;
+    }
+  }
+  // Admin: Approve or decline a food claim
+  async reviewFoodClaim(claimId, approve) {
+    try {
+      const status = approve ? 'approved' : 'declined';
+      const { data, error } = await supabase
+        .from('food_claims')
+        .update({ status })
+        .eq('id', claimId)
+        .select()
+        .single();
+      if (error) throw error;
+
+      // Email notification stub
+      if (approve) {
+        // TODO: Integrate with email service
+        console.log(`Confirmation email sent to claimer and sharer for claim ${claimId}`);
+      } else {
+        // TODO: Integrate with email service
+        console.log(`Polite rejection email sent to claimer for claim ${claimId}`);
+      }
+      return data;
+    } catch (error) {
+      console.error('Review food claim error:', error);
+      reportError(error);
+      throw error;
+    }
+  }
   // Send notification to claimer when claim is approved or declined
   async sendClaimReviewNotification(claimId, approved) {
     try {
@@ -142,15 +318,38 @@ class DataService {
       let query = supabase
         .from('food_listings')
         .select(`
-          *,
-          users!food_listings_user_id_fkey (
+          id,
+          title,
+          description,
+          image_url,
+          quantity,
+          unit,
+          category,
+          listing_type,
+          status,
+          expiry_date,
+          location,
+          donor_name,
+          donor_email,
+          donor_phone,
+          donor_city,
+          donor_state,
+          donor_zip,
+          donor_occupation,
+          donor_type,
+          latitude,
+          longitude,
+          created_at,
+          updated_at,
+          users:user_id (
             id,
             name,
             avatar_url,
-            organization
+            organization,
+            email
           )
         `)
-        .eq('status', 'active')
+        .eq('status', filters.status || 'pending')
 
       // Apply filters
       if (filters.category) {
@@ -190,13 +389,49 @@ class DataService {
 
   async createFoodListing(listingData) {
     try {
-      const { data, error } = await supabase
+      // Get current user
+      const userResult = await supabase.auth.getUser();
+      const user = userResult.data.user;
+      if (!user) throw new Error('User must be authenticated to create a food listing');
+
+      // Prepare listing data with user_id
+      // Keep location-related fields in the main listing object
+      const listing = {
+        ...listingData,
+        user_id: user.id,
+        // Keep these fields for display purposes
+        donor_city: listingData.donor_city,
+        donor_state: listingData.donor_state,
+        donor_zip: listingData.donor_zip,
+        location: listingData.donor_city && listingData.donor_state ? {
+          address: `${listingData.donor_city}, ${listingData.donor_state} ${listingData.donor_zip || ''}`.trim(),
+          latitude: listingData.latitude,
+          longitude: listingData.longitude
+        } : null
+      };
+
+      // Remove other donor fields that are stored in users table
+      delete listing.donor_name;
+      delete listing.donor_email;
+      delete listing.donor_phone;
+      delete listing.donor_occupation;
+
+      const result = await supabase
         .from('food_listings')
-        .insert(listingData)
-        .select()
+        .insert(listing)
+        .select(`
+          *,
+          users!food_listings_user_id_fkey (
+            id,
+            name,
+            avatar_url,
+            organization
+          )
+        `)
         .single()
 
-      if (error) throw error
+      if (result.error) throw result.error
+      return result.data
 
       return data
     } catch (error) {
@@ -932,16 +1167,42 @@ class DataService {
 
   // Real-time subscriptions
   subscribeToFoodListings(callback) {
+    console.log('Setting up food listings subscription');
     const subscription = supabase
       .channel('food_listings_changes')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'food_listings'
-      }, callback)
-      .subscribe()
+      }, (payload) => {
+        console.log('Food listing change detected:', payload.eventType, payload.new?.id);
+        callback(payload);
+      })
+      .subscribe((status) => {
+        console.log('Food listings subscription status:', status);
+      })
 
     this.subscriptions.set('food_listings', subscription)
+    return subscription
+  }
+  
+  subscribeToClaims(callback) {
+    console.log('Setting up food claims subscription');
+    const subscription = supabase
+      .channel('food_claims_changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'food_claims'
+      }, (payload) => {
+        console.log('Food claim change detected:', payload.eventType, payload.new?.id);
+        callback(payload);
+      })
+      .subscribe((status) => {
+        console.log('Food claims subscription status:', status);
+      })
+
+    this.subscriptions.set('food_claims', subscription)
     return subscription
   }
 

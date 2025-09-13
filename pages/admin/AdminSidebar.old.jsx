@@ -1,29 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { reportError } from '../../utils/helpers';
+import { Link } from 'react-router-dom';
 
 function AdminSidebar({ active, onNavigate }) {
+    const menuItems = [
+        { id: 'dashboard', label: 'Dashboard', icon: 'fa-tachometer-alt', path: '/admin' },
+        { id: 'users', label: 'User Management', icon: 'fa-users', path: '/admin/users' },
+        { id: 'moderation', label: 'Content Moderation', icon: 'fa-shield-alt', path: '/admin/moderation' },
+        { id: 'distributions', label: 'Food Distribution', icon: 'fa-box-open', path: '/admin/distributions' },
+        { id: 'reports', label: 'Reports & Analytics', icon: 'fa-chart-bar', path: '/admin/reports' },
+        { id: 'settings', label: 'Settings', icon: 'fa-cog', path: '/admin/settings' },
+        { id: 'profile', label: 'Profile', icon: 'fa-user', path: '/admin/profile' }
+    ];
+
+    const handleKeyPress = (event, path) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onNavigate(path);
+        }
+    };
+
     try {
-        const menuItems = [
-            { id: 'dashboard', label: 'Dashboard', icon: 'fa-tachometer-alt', path: '/admin/dashboard' },
-            { id: 'users', label: 'User Management', icon: 'fa-users', path: '/admin/users' },
-            { id: 'content', label: 'Content Moderation', icon: 'fa-shield-alt', path: '/admin/content' },
-            { id: 'distribution', label: 'Food Distribution', icon: 'fa-box-open', path: '/admin/distribution' },
-            { id: 'reports', label: 'Reports & Analytics', icon: 'fa-chart-bar', path: '/admin/reports' },
-            { id: 'settings', label: 'Settings', icon: 'fa-cog', path: '/admin/settings' }
-        ];
-
-        const handleKeyPress = (event, path) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                onNavigate(path);
-            }
-        };
-
         return (
             <div 
                 data-name="admin-sidebar" 
-                className="h-full flex flex-col"
+                className="h-full flex flex-col bg-gray-800"
                 role="navigation"
                 aria-label="Admin navigation"
             >
@@ -48,13 +49,11 @@ function AdminSidebar({ active, onNavigate }) {
                             key={item.id}
                             onClick={() => onNavigate(item.path)}
                             onKeyDown={(e) => handleKeyPress(e, item.path)}
-                            className={`
-                                w-full flex items-center px-4 py-2 text-sm font-medium rounded-md
-                                transition-colors duration-150 ease-in-out
-                                ${active === item.id 
-                                    ? 'bg-gray-900 text-white' 
-                                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'}
-                            `}
+                            className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ${
+                                active === item.id
+                                    ? 'text-white bg-gray-900'
+                                    : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                            }`}
                             role="menuitem"
                             aria-current={active === item.id ? 'page' : undefined}
                         >
@@ -64,12 +63,11 @@ function AdminSidebar({ active, onNavigate }) {
                     ))}
                 </nav>
 
-                {/* Footer */}
+                {/* Bottom section */}
                 <div className="p-4 border-t border-gray-700">
-                    <button 
+                    <button
                         onClick={() => onNavigate('/')}
-                        onKeyDown={(e) => handleKeyPress(e, '/')}
-                        className="flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white w-full"
+                        className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 rounded-md"
                         aria-label="Return to main site"
                     >
                         <i className="fas fa-arrow-left w-6" aria-hidden="true"></i>
@@ -79,7 +77,6 @@ function AdminSidebar({ active, onNavigate }) {
             </div>
         );
     } catch (error) {
-        console.error('AdminSidebar error:', error);
         reportError(error);
         return null;
     }

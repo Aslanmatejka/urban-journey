@@ -84,13 +84,6 @@ function Header({
                     </nav>
 
                     <div data-name="user-actions" className="hidden md:flex items-center space-x-4">
-                        <button 
-                            className="text-gray-400 hover:text-gray-500"
-                            onClick={() => handleNavigation('/notifications')}
-                        >
-                            <i className="fas fa-bell"></i>
-                        </button>
-                        
                         {isAuthenticated ? (
                             <div 
                                 className="relative group"

@@ -1,76 +1,108 @@
+
 import React, { useEffect, useState } from 'react';
-import Button from '../common/Button';
 import dataService from '../../utils/dataService';
+import AdminClaimDashboard from './AdminClaimDashboard';
+import supabase from '../../utils/supabaseClient';
+import { useAuthContext } from '../../utils/AuthContext';
+import { debugAuthState } from '../../utils/authDebug';
 
 function AdminDashboard() {
-  const [pendingListings, setPendingListings] = useState([]);
+  const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [actionStatus, setActionStatus] = useState({});
+  const [activeTab, setActiveTab] = useState('pending');
+  const { isAuthenticated, isAdmin } = useAuthContext();
 
+  // Debug auth state on component mount
   useEffect(() => {
-    fetchPendingListings();
+    debugAuthState().then(state => {
+      console.log('Auth state in AdminDashboard:', state);
+    });
   }, []);
 
-  async function fetchPendingListings() {
+  useEffect(() => {
+    if (activeTab === 'pending') {
+      fetchPendingFoods();
+    }
+  }, [activeTab]);
+
+  async function fetchPendingFoods() {
     setLoading(true);
-    setError(null);
     try {
       const listings = await dataService.getFoodListings({ status: 'pending' });
-      setPendingListings(listings);
+      setFoods(listings || []);
     } catch (err) {
-      setError('Failed to fetch pending listings.');
+      setFoods([]);
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleReview(listingId, approve) {
-    setActionStatus({ ...actionStatus, [listingId]: 'loading' });
+  async function handleAction(id, action) {
+    setActionStatus({ ...actionStatus, [id]: 'loading' });
     try {
-      await dataService.updateFoodListingStatus(listingId, approve ? 'approved' : 'declined');
-      setActionStatus({ ...actionStatus, [listingId]: approve ? 'approved' : 'declined' });
-      // Optionally send notification to user if declined
-      if (!approve) {
-        await dataService.sendDeclineNotification(listingId);
-      }
-      // Refresh list
-      fetchPendingListings();
+      await dataService.updateFoodListingStatus(id, action);
+      setActionStatus({ ...actionStatus, [id]: action });
+      fetchPendingFoods();
     } catch (err) {
-      setActionStatus({ ...actionStatus, [listingId]: 'error' });
+      setActionStatus({ ...actionStatus, [id]: 'error' });
     }
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard: Pending Food Submissions</h1>
-      {loading && <div>Loading...</div>}
-      {error && <div className="text-red-600">{error}</div>}
-      <div className="space-y-6">
-        {pendingListings.length === 0 && !loading ? (
-          <div className="text-gray-600">No pending submissions.</div>
-        ) : (
-          pendingListings.map(listing => (
-            <div key={listing.id} className="bg-white rounded shadow p-6 border">
-              <div className="font-bold text-lg mb-2">{listing.title}</div>
-              <div className="mb-2">{listing.description}</div>
-              <img src={listing.image_url} alt={listing.title} className="w-32 h-32 object-cover mb-2" />
-              <div className="mb-2">Donor: {listing.donor?.name || 'N/A'}</div>
-              <div className="flex gap-4 mt-4">
-                <Button variant="success" onClick={() => handleReview(listing.id, true)} disabled={actionStatus[listing.id] === 'loading'}>
-                  Approve
-                </Button>
-                <Button variant="danger" onClick={() => handleReview(listing.id, false)} disabled={actionStatus[listing.id] === 'loading'}>
-                  Decline
-                </Button>
-                {actionStatus[listing.id] === 'approved' && <span className="text-green-600 ml-2">Approved</span>}
-                {actionStatus[listing.id] === 'declined' && <span className="text-red-600 ml-2">Declined</span>}
-                {actionStatus[listing.id] === 'error' && <span className="text-red-600 ml-2">Error</span>}
-              </div>
-            </div>
-          ))
-        )}
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+      <div className="mb-6 flex gap-4">
+        <button
+          className={`px-4 py-2 rounded ${activeTab === 'pending' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          onClick={() => setActiveTab('pending')}
+        >Pending Foods</button>
+        <button
+          className={`px-4 py-2 rounded ${activeTab === 'claimed' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          onClick={() => setActiveTab('claimed')}
+        >Claimed Foods</button>
       </div>
+      {activeTab === 'pending' ? (
+        loading ? (
+          <div>Loading...</div>
+        ) : (
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {foods.map(food => (
+              <div key={food.id} className="bg-white shadow rounded p-4 flex flex-col items-center">
+                {food.image_url && (
+                  <img src={food.image_url} alt={food.title || food.name} className="w-32 h-32 object-cover mb-2 rounded" />
+                )}
+                <h2 className="text-lg font-semibold mb-2">{food.title || food.name}</h2>
+                {food.description && <p className="mb-2 text-gray-700 text-center">{food.description}</p>}
+                <div className="mb-2 text-sm text-gray-600">
+                  {food.category && <span className="mr-2"><strong>Category:</strong> {food.category}</span>}
+                  {food.quantity && <span className="mr-2"><strong>Quantity:</strong> {food.quantity} {food.unit || ''}</span>}
+                  {food.expiry_date && <span className="mr-2"><strong>Expiry:</strong> {food.expiry_date}</span>}
+                  {food.location && <span className="mr-2"><strong>Location:</strong> {food.location}</span>}
+                </div>
+                <p className="mb-4">Status: <span className="font-bold text-yellow-600">{food.status}</span></p>
+                <div className="flex gap-2">
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    onClick={() => handleAction(food.id, 'approved')}
+                    disabled={food.status !== 'pending' || actionStatus[food.id] === 'loading'}
+                  >Approve</button>
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    onClick={() => handleAction(food.id, 'declined')}
+                    disabled={food.status !== 'pending' || actionStatus[food.id] === 'loading'}
+                  >Decline</button>
+                  {actionStatus[food.id] === 'approved' && <span className="text-green-600 ml-2">Approved</span>}
+                  {actionStatus[food.id] === 'declined' && <span className="text-red-600 ml-2">Declined</span>}
+                  {actionStatus[food.id] === 'error' && <span className="text-red-600 ml-2">Error</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      ) : (
+        <AdminClaimDashboard />
+      )}
     </div>
   );
 }

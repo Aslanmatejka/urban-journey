@@ -1,9 +1,15 @@
-// Inject is_admin claim into Supabase session for local admin testing
+import supabase from './supabaseClient.js';
+import { reportError } from './helpers.js';
 import supabase from './supabaseClient.js';
 
 export async function injectAdminClaim(userId) {
   const { data: profile, error } = await supabase
-    .from('users')
+    .from('u      console.log('Signup successful:', data.user);
+      return { success: true, user: data.user };
+    } catch (error) {
+      console.error('Sign up error:', error);
+      reportError(error);
+      throw error;
     .select('is_admin')
     .eq('id', userId)
     .single();
@@ -29,10 +35,10 @@ import { reportError } from './helpers.js'
 
 class AuthService {
   constructor() {
-    this.currentUser = null
-    this.isAuthenticated = false
-    this.isAdmin = false
-    this.listeners = []
+    this.currentUser = null;
+    this.isAuthenticated = false;
+    this.isAdmin = false;
+    this.listeners = [];
 
     // Restore from localStorage if available
     const storedUser = localStorage.getItem('currentUser')
@@ -103,8 +109,11 @@ class AuthService {
               name: user.user_metadata?.name || user.email,
               account_type: user.user_metadata?.account_type || 'individual',
               avatar_url: user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.user_metadata?.name || user.email)}&background=random`,
+              organization: user.user_metadata?.organization || null,
               role: 'user',
-              status: 'active'
+              status: 'active',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
             })
             .select()
             .single()
@@ -196,8 +205,12 @@ class AuthService {
         throw new Error('Email and password are required');
       }
 
-      console.log('Attempting signup with:', {
-        email: userData.email,
+      // Prepare user metadata
+      const metadata = {
+        name: userData.options?.data?.name || userData.email,
+        account_type: userData.options?.data?.account_type || 'individual',
+        avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.options?.data?.name || userData.email)}&background=random`
+      };
         metadata: userData.options?.data
       });
 
@@ -222,8 +235,8 @@ class AuthService {
       return { success: true, user: data.user }
     } catch (error) {
       console.error('Sign up error:', error)
-      reportError(error)
-      throw error
+      reportError(error);
+      throw error;
     }
   }
 

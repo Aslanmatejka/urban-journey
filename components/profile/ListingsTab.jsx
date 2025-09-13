@@ -115,7 +115,7 @@ function ListingsTab({
                     <Card key={listing.id} className="overflow-hidden">
                         <div className="aspect-w-16 aspect-h-9">
                             <img 
-                                src={listing.image} 
+                                src={listing.image_url || '/images/placeholder-food.png'} 
                                 alt={listing.title}
                                 className="w-full h-48 object-cover"
                                 onError={handleImageError}
@@ -138,7 +138,7 @@ function ListingsTab({
                             <p className="text-gray-600 text-sm mb-4">{listing.description}</p>
                             <div className="flex justify-between items-center">
                                 <span className="text-sm text-gray-500">
-                                    {formatDate(listing.createdAt)}
+                                    {listing.expiry_date ? formatDate(listing.expiry_date) : 'No expiry date'}
                                 </span>
                                 <div className="flex space-x-2">
                                     <Button

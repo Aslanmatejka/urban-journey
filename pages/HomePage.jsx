@@ -10,7 +10,7 @@ import { DonateVolunteerButtons } from "./CommunityPage";
 
 function HomePage() {
     const navigate = useNavigate();
-    const { listings: featuredListings } = useFoodListings({ limit: 6 });
+    const { listings: featuredListings } = useFoodListings({ status: 'approved', limit: 6 });
     
     try {
         const foodCategories = [
@@ -112,14 +112,14 @@ function HomePage() {
                                 </p>
                                 <div className="flex space-x-4">
                                     <Button 
-                                        variant="light"
+                                        variant="secondary"
                                         onClick={() => handleNavigation('/share')}
                                         aria-label="Share food with the community"
                                     >
                                         Share Food
                                     </Button>
                                     <Button 
-                                        variant="outline-light"
+                                        variant="outline"
                                         onClick={() => handleNavigation('/find')}
                                         aria-label="Find food in your area"
                                     >
@@ -210,7 +210,7 @@ function HomePage() {
 
                             <div className="text-center mt-8">
                                 <Button 
-                                    variant="link"
+                                    variant="secondary"
                                     onClick={() => handleNavigation('/find')}
                                     className="text-green-600 font-semibold hover:text-green-700 flex items-center mx-auto"
                                     aria-label="View all food categories"

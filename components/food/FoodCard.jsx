@@ -35,13 +35,22 @@ function FoodCard({
         image_url,
         quantity,
         unit,
-        expiryDate,
+        expiry_date,
         location,
-        donor,
+        users,
+        donor_name,
+        donor_city,
+        donor_state,
         type = 'donation', // 'donation' or 'trade'
     } = food;
 
-    const expirationStatus = getExpirationStatus(expiryDate);
+    const donor = {
+        name: donor_name || (users?.[0] || users)?.organization || (users?.[0] || users)?.name || 'Anonymous',
+        avatar: (users?.[0] || users)?.avatar_url
+    };
+
+    // Use expiry_date from DB, fallback to empty string if missing
+    const expirationStatus = getExpirationStatus(expiry_date || '');
 
     const handleClaim = () => {
         if (typeof onClaim === 'function') {
@@ -86,29 +95,47 @@ function FoodCard({
             image={image_url}
             title={title}
             subtitle={
-                <div className="flex items-center space-x-2">
-                    <span 
-                        className={`badge badge-${expirationStatus.status}`}
-                        role="status"
-                        aria-label={`Expiration status: ${expirationStatus.label}`}
-                    >
-                        {expirationStatus.label}
-                    </span>
-                    <span className="text-gray-500">
-                        {formatDate(expiryDate)}
-                    </span>
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                            <Avatar 
+                                src={donor && donor.avatar ? donor.avatar : undefined} 
+                                size="sm" 
+                                alt={`${donor && donor.name ? donor.name : 'Donor'}'s avatar`}
+                            />
+                            <span className="text-sm text-gray-600">{donor && donor.name ? donor.name : 'Unknown Donor'}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                            <i className="fas fa-map-marker-alt text-gray-400 mr-2" aria-hidden="true"></i>
+                            <span>
+                                {donor_city && donor_state ? 
+                                    `${donor_city}, ${donor_state}` :
+                                    (typeof location === 'object' && location?.address ? 
+                                        location.address :
+                                        (typeof location === 'string' ? 
+                                            location : 
+                                            'No location available')
+                                    )}
+                            </span>
+                            {distance && <span className="ml-1 text-gray-500">({formatDistance(distance)})</span>}
+                        </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <span 
+                            className={`badge badge-${expirationStatus.status}`}
+                            role="status"
+                            aria-label={`Expiration status: ${expirationStatus.label}`}
+                        >
+                            {expirationStatus.label}
+                        </span>
+                        <span className="text-gray-500">
+                            {expiry_date ? formatDate(expiry_date) : 'No expiry date'}
+                        </span>
+                    </div>
                 </div>
             }
             footer={
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                        <Avatar 
-                            src={donor.avatar} 
-                            size="sm" 
-                            alt={`${donor.name}'s avatar`}
-                        />
-                        <span className="text-sm text-gray-600">{donor.name}</span>
-                    </div>
+                <div className="flex items-center justify-end">
                     <div className="flex space-x-2">
                         {type === 'donation' ? (
                             <Button
@@ -131,19 +158,7 @@ function FoodCard({
                                 Trade
                             </Button>
                         )}
-                        {type === 'donation' && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={handleAIRecipes}
-                                disabled={aiLoading}
-                                aria-label={`Get AI recipe suggestions for ${title}`}
-                                className="ai-recipe-btn"
-                            >
-                                <i className="fas fa-robot mr-1"></i>
-                                {aiLoading ? 'AI...' : 'Recipes'}
-                            </Button>
-                        )}
+                        {/* Recipes button removed for shared food */}
                         {showReturnButton && (
                             <Button
                                 variant="secondary"
@@ -160,14 +175,10 @@ function FoodCard({
         >
             <div className="space-y-2">
                 <p className="text-gray-600">{description}</p>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center">
                     <div className="flex items-center">
                         <i className="fas fa-box-open text-gray-400 mr-2" aria-hidden="true"></i>
                         <span>{quantity} {unit}</span>
-                    </div>
-                    <div className="flex items-center">
-                        <i className="fas fa-map-marker-alt text-gray-400 mr-2" aria-hidden="true"></i>
-                        <span>{location}</span>
                     </div>
                 </div>
                 

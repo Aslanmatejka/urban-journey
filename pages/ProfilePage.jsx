@@ -4,13 +4,14 @@ import Avatar from "../components/common/Avatar";
 import Button from "../components/common/Button";
 import ProfileStats from "../components/profile/ProfileStats";
 import ListingsTab from "../components/profile/ListingsTab";
-import { useAuth, useFoodListings, useUserProfile } from "../utils/hooks/useSupabase";
+import { useAuthContext } from "../utils/AuthContext";
+import { useFoodListings, useUserProfile } from "../utils/hooks/useSupabase";
 import ErrorBoundary from "../components/common/ErrorBoundary";
 import { DonateVolunteerButtons } from "./CommunityPage";
 
 function ProfilePageContent() {
     const navigate = useNavigate();
-    const { user: authUser, isAuthenticated } = useAuth();
+    const { user: authUser, isAuthenticated, uploadAvatar } = useAuthContext();
     const { profile, loading: profileLoading, error: profileError } = useUserProfile(authUser?.id);
     const { listings, loading: listingsLoading, error: listingsError } = useFoodListings({ user_id: authUser?.id });
     
@@ -92,11 +93,34 @@ function ProfilePageContent() {
                 <div className="p-6">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
                         <div className="flex items-center mb-4 md:mb-0">
-                            <Avatar
-                                src={profile.avatar_url}
-                                size="xl"
-                                alt={`${profile.name}'s avatar`}
-                            />
+                            <div className="relative group">
+                                <Avatar
+                                    src={profile.avatar_url}
+                                    size="xl"
+                                    alt={`${profile.name}'s avatar`}
+                                />
+                                <label htmlFor="avatar-upload" className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 cursor-pointer transition duration-200">
+                                    <span className="text-white opacity-0 group-hover:opacity-100 text-sm font-semibold"><i className="fas fa-camera mr-2"></i>Change</span>
+                                </label>
+                                <input
+                                    id="avatar-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={async (e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            try {
+                                                // Call uploadAvatar from context
+                                                await authUser && authUser.uploadAvatar(file);
+                                                window.location.reload(); // Refresh to show new avatar
+                                            } catch (err) {
+                                                alert('Failed to upload avatar.');
+                                            }
+                                        }
+                                    }}
+                                />
+                            </div>
                             <div className="ml-4">
                                 <h1 className="text-2xl font-bold text-gray-900">{profile.name}</h1>
                                 <p className="text-gray-600">{profile.email}</p>

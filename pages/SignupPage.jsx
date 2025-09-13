@@ -71,20 +71,26 @@ function SignupPageContent() {
 
         try {
             const userData = {
-                name: formData.name.trim(),
                 email: formData.email.toLowerCase().trim(),
                 password: formData.password,
-                accountType: formData.accountType
+                options: {
+                    data: {
+                        name: formData.name.trim(),
+                        account_type: formData.accountType
+                    }
+                }
             };
 
             const { user, error } = await signUp(userData);
             
             if (error) {
-                setErrors({ form: error.message });
+                console.error('Detailed signup error:', error);
+                setErrors({ form: error.message || 'Error during signup. Please try again.' });
                 return;
             }
 
             if (user) {
+                // Show success message and redirect
                 // Use setTimeout to avoid DOM manipulation during render
                 setTimeout(() => {
                     navigate('/profile');
@@ -92,7 +98,7 @@ function SignupPageContent() {
             }
         } catch (error) {
             console.error('Signup error:', error);
-            setErrors({ form: 'An unexpected error occurred. Please try again.' });
+            setErrors({ form: error.message || 'An unexpected error occurred. Please try again.' });
         }
     };
 
