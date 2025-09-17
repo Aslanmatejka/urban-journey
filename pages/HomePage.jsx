@@ -108,7 +108,7 @@ function HomePage() {
                                     Share Food, Reduce Waste, Build Community
                                 </h1>
                                 <p className="text-xl mb-8">
-                                    Join our movement to combat food waste and hunger through community-driven food sharing and trading.
+                                    Join our movement to combat food waste and hunger through community-driven food sharing.
                                 </p>
                                 <div className="flex space-x-4">
                                     <Button 
