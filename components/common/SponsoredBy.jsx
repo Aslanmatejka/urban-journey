@@ -8,12 +8,12 @@ import shareChicken from "../../pages/sponsoredby/sharechicken.png";
 import sharePizza from "../../pages/sponsoredby/sharepizza.png";
 
 const sponsors = [
-  { name: "Cheese Board", img: cheeseBoard },
-  { name: "Community", img: community },
-  { name: "Farm", img: farm },
-  { name: "Feeding Elmeda", img: feedingElmeda },
+  { name: "The Cheese Board Collective", img: cheeseBoard },
+  { name: "Almeda County food Bank", img: community },
+  { name: "Bakery", img: farm },
+  { name: "Almeda food Bank", img: feedingElmeda },
   { name: "Feel Good Bakery", img: feelGoodBakery },
-  { name: "Share Chicken", img: shareChicken },
+  { name: "Community kitchen", img: shareChicken },
   { name: "Share Pizza", img: sharePizza }
 ];
 
