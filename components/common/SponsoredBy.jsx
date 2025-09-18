@@ -9,11 +9,11 @@ import sharePizza from "../../pages/sponsoredby/sharepizza.png";
 
 const sponsors = [
   { name: "The Cheese Board Collective", img: cheeseBoard },
-  { name: "Almeda County food Bank", img: community },
+  { name: "Almeda County Food Bank", img: community },
   { name: "Bakery", img: farm },
-  { name: "Almeda food Bank", img: feedingElmeda },
+  { name: "Almeda Food Bank", img: feedingElmeda },
   { name: "Feel Good Bakery", img: feelGoodBakery },
-  { name: "Community kitchen", img: shareChicken },
+  { name: "Community Kitchen", img: shareChicken },
   { name: "Share Pizza", img: sharePizza }
 ];
 
