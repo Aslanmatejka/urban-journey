@@ -11,8 +11,8 @@ function Footer({
 
     ],
     communityLinks = [
-        { label: 'Blog', path: '/blog' },
-        { label: 'Success Stories', path: '/success' },
+        { label: '', path: '/blog' },
+        { label: '', path: '/success' },
 
         { label: 'Community Hub', path: '/community' }
     ],
