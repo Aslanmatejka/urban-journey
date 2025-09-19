@@ -62,27 +62,51 @@ function HomePage() {
         const communities = [
             {
                 id: 1,
-                name: 'Brooklyn Food Sharing',
-                description: 'A community of food sharers in Brooklyn. Join us to reduce food waste and help others!',
-                members: 156,
-                lastActive: '2024-01-15',
-                image: 'https://images.unsplash.com/photo-1518398046578-8cca57782e17?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60'
+                name: 'Do Good Warehouse',
+                description: '1900 Thau Way, Alameda, CA 94501\nContact: Chris Tam\nHours: M-F 9am - 3pm',
+                phone: '510-522-6288',
+                lastActive: new Date().toISOString(),
+                image: ''
             },
             {
                 id: 2,
-                name: 'Vegan Food Exchange',
-                description: 'Exchange vegan food and share recipes with other plant-based food lovers.',
-                members: 89,
-                lastActive: '2024-01-15',
-                image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60'
+                name: 'Ruby Bridges Elementary CC',
+                description: '351 Jack London Ave, Alameda, CA 94501\nContact: Renata Westbrook\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                phone: '510-748-4006',
+                lastActive: new Date().toISOString(),
+                image: ''
             },
             {
                 id: 3,
-                name: 'Home Gardeners Network',
-                description: 'Connect with fellow gardeners to share your harvest and gardening tips.',
-                members: 234,
-                lastActive: '2024-01-15',
-                image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60'
+                name: 'NEA/ACLC CC',
+                description: '1900 3rd St, Alameda, CA 94501\nContact: Gabby Gutierrez\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                phone: '510-748-4008',
+                lastActive: new Date().toISOString(),
+                image: ''
+            },
+            {
+                id: 4,
+                name: 'Academy of Alameda CC',
+                description: '401 Pacific Avenue Alameda, CA 94501\nContact: Suzy Valencia\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                phone: '510-748-4017',
+                lastActive: new Date().toISOString(),
+                image: ''
+            },
+            {
+                id: 5,
+                name: 'Island HS CC',
+                description: '500 Pacific Avenue Alameda, CA 94501\nContact: Marina ZEPEDA\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                phone: '510-748-4024',
+                lastActive: new Date().toISOString(),
+                image: ''
+            },
+            {
+                id: 6,
+                name: 'Encinal Jr Sr High School',
+                description: '210 Central Avenue Alameda, CA 94501\nContact: Nurse Frances\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                phone: '510-748-4023',
+                lastActive: new Date().toISOString(),
+                image: ''
             }
         ];
 
@@ -108,7 +132,7 @@ function HomePage() {
                                     Share Food, Reduce Waste, Build Community
                                 </h1>
                                 <p className="text-xl mb-8">
-                                    Join our movement to combat food waste and hunger through community-driven food sharing.
+                                    Join our movement to combat food waste and hunger through community-driven food sharing and trading.
                                 </p>
                                 <div className="flex space-x-4">
                                     <Button 
@@ -319,20 +343,17 @@ function HomePage() {
                                             <h3 className="text-xl font-semibold mb-2">{community.name}</h3>
                                             <p className="text-gray-600 mb-4">{community.description}</p>
                                             <div className="flex justify-between items-center">
-                                                <span className="text-sm text-gray-500">
-                                                    {community.members} members
-                                                </span>
+                                                <a href={`tel:${community.phone}`} className="text-sm text-blue-600 hover:underline">
+                                                    {community.phone}
+                                                </a>
                                                 <Button
                                                     variant="primary"
                                                     size="sm"
                                                     onClick={() => handleNavigation('/community')}
-                                                    aria-label={`Join ${community.name} community`}
+                                                    aria-label={`Contact ${community.name}`}
                                                 >
-                                                    Join Group
+                                                    Contact
                                                 </Button>
-                                            </div>
-                                            <div className="mt-2 text-sm text-gray-500">
-                                                Active {formatDate(community.lastActive)}
                                             </div>
                                         </div>
                                     </Card>
