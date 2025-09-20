@@ -66,7 +66,7 @@ function HomePage() {
                 description: '1900 Thau Way, Alameda, CA 94501\nContact: Chris Tam\nHours: M-F 9am - 3pm',
                 phone: '510-522-6288',
                 lastActive: new Date().toISOString(),
-                image: 'pages/sponsoredby/allgoodliving.jpg'
+                image: 'sponsoredby/allgoodliving.jpg'
             },
             {
                 id: 2,
