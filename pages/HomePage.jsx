@@ -63,50 +63,62 @@ function HomePage() {
             {
                 id: 1,
                 name: 'Do Good Warehouse',
-                description: '1900 Thau Way, Alameda, CA 94501\nContact: Chris Tam\nHours: M-F 9am - 3pm',
+                location: '1900 Thau Way, Alameda, CA 94501',
+                contact: 'Chris Tam',
+                hours: 'M-F 9am - 3pm',
                 phone: '510-522-6288',
                 lastActive: new Date().toISOString(),
-                image: 'sponsoredby/allgoodliving.jpg'
+                image: '/pages/sponsoredby/allgoodliving.jpg'
             },
             {
                 id: 2,
                 name: 'Ruby Bridges Elementary CC',
-                description: '351 Jack London Ave, Alameda, CA 94501\nContact: Renata Westbrook\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                location: '351 Jack London Ave, Alameda, CA 94501',
+                contact: 'Renata Westbrook',
+                hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4006',
                 lastActive: new Date().toISOString(),
-                image: ''
+                image: '/pages/sponsoredby/Ruby.jpg'
             },
             {
                 id: 3,
                 name: 'NEA/ACLC CC',
-                description: '1900 3rd St, Alameda, CA 94501\nContact: Gabby Gutierrez\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                location: '1900 3rd St, Alameda, CA 94501',
+                contact: 'Gabby Gutierrez',
+                hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4008',
                 lastActive: new Date().toISOString(),
-                image: ''
+                image: '/pages/sponsoredby/ACLC.jpg'
             },
             {
                 id: 4,
                 name: 'Academy of Alameda CC',
-                description: '401 Pacific Avenue Alameda, CA 94501\nContact: Suzy Valencia\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                location: '401 Pacific Avenue Alameda, CA 94501',
+                contact: 'Suzy Valencia',
+                hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4017',
                 lastActive: new Date().toISOString(),
-                image: ''
+                image: '/pages/sponsoredby/the academy.jpg'
             },
             {
                 id: 5,
                 name: 'Island HS CC',
-                description: '500 Pacific Avenue Alameda, CA 94501\nContact: Marina ZEPEDA\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                location: '500 Pacific Avenue Alameda, CA 94501',
+                contact: 'Marina ZEPEDA',
+                hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4024',
                 lastActive: new Date().toISOString(),
-                image: ''
+                image: '/pages/sponsoredby/island.jpg'
             },
             {
                 id: 6,
                 name: 'Encinal Jr Sr High School',
-                description: '210 Central Avenue Alameda, CA 94501\nContact: Nurse Frances\nHours: Monday - Friday 8:00 am - 4:00 pm',
+                location: '210 Central Avenue Alameda, CA 94501',
+                contact: 'Nurse Frances',
+                hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4023',
                 lastActive: new Date().toISOString(),
-                image: ''
+                image: '/pages/sponsoredby/jets.jpg'
             }
         ];
 
@@ -324,7 +336,7 @@ function HomePage() {
                             </div>
 
                             <div 
-                                className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 max-w-6xl mx-auto"
                                 role="list"
                                 aria-label="Active communities"
                             >
@@ -337,12 +349,23 @@ function HomePage() {
                                         <img
                                             src={community.image}
                                             alt={`${community.name} community`}
-                                            className="w-full h-48 object-cover"
+                                            className="w-full h-64 object-cover"
                                         />
-                                        <div className="p-6">
-                                            <h3 className="text-xl font-semibold mb-2">{community.name}</h3>
-                                            <p className="text-gray-600 mb-4">{community.description}</p>
-                                            <div className="flex justify-between items-center">
+                                        <div className="p-4">
+                                            <h3 className="text-base font-semibold truncate mb-2">{community.name}</h3>
+                                            <div className="flex items-start text-xs text-gray-700 mb-1.5">
+                                                <i className="fas fa-map-marker-alt w-4 text-center mr-2 mt-0.5 text-gray-500"></i>
+                                                <span>{community.location}</span>
+                                            </div>
+                                            <div className="flex items-start text-xs text-gray-700 mb-1.5">
+                                                <i className="fas fa-user w-4 text-center mr-2 mt-0.5 text-gray-500"></i>
+                                                <span>Contact: {community.contact}</span>
+                                            </div>
+                                            <div className="flex items-start text-xs text-gray-700 mb-2">
+                                                <i className="fas fa-clock w-4 text-center mr-2 mt-0.5 text-gray-500"></i>
+                                                <span>Hours: {community.hours}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center mt-3 pt-2 border-t">
                                                 <a href={`tel:${community.phone}`} className="text-sm text-blue-600 hover:underline">
                                                     {community.phone}
                                                 </a>
