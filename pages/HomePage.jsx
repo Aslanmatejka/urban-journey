@@ -68,7 +68,7 @@ function HomePage() {
                 hours: 'M-F 9am - 3pm',
                 phone: '510-522-6288',
                 lastActive: new Date().toISOString(),
-                image: '/sponsoredby/allgoodliving.jpg'
+                image: '/pages/sponsoredby/allgoodliving.jpg'
             },
             {
                 id: 2,
@@ -78,7 +78,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4006',
                 lastActive: new Date().toISOString(),
-                image: '/sponsoredby/Ruby.jpg'
+                image: '/pages/sponsoredby/Ruby.jpg'
             },
             {
                 id: 3,
@@ -88,7 +88,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4008',
                 lastActive: new Date().toISOString(),
-                image: '/sponsoredby/ACLC.jpg'
+                image: '/pages/sponsoredby/ACLC.jpg'
             },
             {
                 id: 4,
@@ -98,7 +98,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4017',
                 lastActive: new Date().toISOString(),
-                image: '/sponsoredby/the academy.jpg'
+                image: '/pages/sponsoredby/the academy.jpg'
             },
             {
                 id: 5,
@@ -108,7 +108,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4024',
                 lastActive: new Date().toISOString(),
-                image: '/sponsoredby/island.jpg'
+                image: '/pages/sponsoredby/island.jpg'
             },
             {
                 id: 6,
@@ -118,7 +118,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4023',
                 lastActive: new Date().toISOString(),
-                image: '/sponsoredby/jets.jpg'
+                image: '/pages/sponsoredby/jets.jpg'
             }
         ];
 
