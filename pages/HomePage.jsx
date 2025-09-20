@@ -65,7 +65,7 @@ function HomePage() {
                 name: 'Do Good Warehouse',
                 location: '1900 Thau Way, Alameda, CA 94501',
                 contact: 'Chris Tam',
-                hours: 'M-F 9am - 3pm',
+                hours: 'Monday-Friday 9am - 3pm',
                 phone: '510-522-6288',
                 lastActive: new Date().toISOString(),
                 image: '/pages/sponsoredby/allgoodliving.jpg'
