@@ -982,6 +982,7 @@ class DataService {
         category: postData.category || 'general',
         author_id: postData.author?.id || postData.author_id
       };
+      console.log('Debug: Creating community post with author_id:', dbData.author_id);
 
       const { data, error } = await supabase
         .from('community_posts')
