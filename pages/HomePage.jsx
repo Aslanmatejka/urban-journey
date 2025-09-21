@@ -68,7 +68,7 @@ function HomePage() {
                 hours: 'Monday-Friday 9am - 3pm',
                 phone: '510-522-6288',
                 lastActive: new Date().toISOString(),
-                image: '/pages/sponsoredby/allgoodliving.jpg'
+                image: 'https://github.com/Aslanmatejka/my-public-assets/blob/main/allgoodliving.jpg?raw=true'
             },
             {
                 id: 2,
@@ -78,7 +78,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4006',
                 lastActive: new Date().toISOString(),
-                image: '/pages/sponsoredby/Ruby.jpg'
+                image: 'https://github.com/Aslanmatejka/my-public-assets/blob/main/Ruby.jpg?raw=true'
             },
             {
                 id: 3,
@@ -88,7 +88,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4008',
                 lastActive: new Date().toISOString(),
-                image: '/pages/sponsoredby/ACLC.jpg'
+                image: 'https://github.com/Aslanmatejka/my-public-assets/blob/main/ACLC.jpg?raw=true'
             },
             {
                 id: 4,
@@ -98,7 +98,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4017',
                 lastActive: new Date().toISOString(),
-                image: '/pages/sponsoredby/the academy.jpg'
+                image: 'https://github.com/Aslanmatejka/my-public-assets/blob/main/the%20academy.jpg?raw=true'
             },
             {
                 id: 5,
@@ -108,7 +108,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4024',
                 lastActive: new Date().toISOString(),
-                image: '/pages/sponsoredby/island.jpg'
+                image: 'https://github.com/Aslanmatejka/my-public-assets/blob/main/island.jpg?raw=true'
             },
             {
                 id: 6,
@@ -118,7 +118,7 @@ function HomePage() {
                 hours: 'Monday - Friday 8:00 am - 4:00 pm',
                 phone: '510-748-4023',
                 lastActive: new Date().toISOString(),
-                image: '/pages/sponsoredby/jets.jpg'
+                image: 'https://github.com/Aslanmatejka/my-public-assets/blob/main/jets.jpg?raw=true'
             }
         ];
 
